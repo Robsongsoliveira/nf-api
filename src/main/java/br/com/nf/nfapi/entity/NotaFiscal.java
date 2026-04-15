@@ -1,10 +1,16 @@
 package br.com.nf.nfapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Entity
 @Table(name = "notas_fiscais")
 public class NotaFiscal {
@@ -28,59 +34,24 @@ public class NotaFiscal {
     @OneToMany(mappedBy = "notaFiscal", cascade = CascadeType.ALL)
     private List<ItemNotaFiscal> itens = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNumero() { return numero; }
+    public void setNumero(String numero) { this.numero = numero; }
 
-    public String getNumero() {
-        return numero;
-    }
+    public String getFornecedor() { return fornecedor; }
+    public void setFornecedor(String fornecedor) { this.fornecedor = fornecedor; }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
+    public LocalDate getDataNota() { return dataNota; }
+    public void setDataNota(LocalDate dataNota) { this.dataNota = dataNota; }
 
-    public String getFornecedor() {
-        return fornecedor;
-    }
+    public Double getValorTotal() { return valorTotal; }
+    public void setValorTotal(Double valorTotal) { this.valorTotal = valorTotal; }
 
-    public void setFornecedor(String fornecedor) {
-        this.fornecedor = fornecedor;
-    }
+    public Cliente getCliente() { return cliente; }
+    public void setCliente(Cliente cliente) { this.cliente = cliente; }
 
-    public LocalDate getDataNota() {
-        return dataNota;
-    }
-
-    public void setDataNota(LocalDate dataNota) {
-        this.dataNota = dataNota;
-    }
-
-    public Double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(Double valorTotal) {
-        this.valorTotal = valorTotal;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public List<ItemNotaFiscal> getItens() {
-        return itens;
-    }
-
-    public void setItens(List<ItemNotaFiscal> itens) {
-        this.itens = itens;
-    }
+    public List<ItemNotaFiscal> getItens() { return itens; }
+    public void setItens(List<ItemNotaFiscal> itens) { this.itens = itens; }
 }
