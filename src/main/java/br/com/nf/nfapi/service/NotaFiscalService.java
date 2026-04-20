@@ -60,11 +60,11 @@ public class NotaFiscalService {
         for (ItemNotaFiscal item : itens) {
 
             if (item.getQuantidade() == null || item.getQuantidade() <= 0) {
-                throw new RuntimeException("Quantidade inválida no item. Use quantidade > 0.");
+                throw new RuntimeException("Quantidade inválida no item.");
             }
 
             if (item.getProduto() == null || item.getProduto().getId() == null) {
-                throw new RuntimeException("Produto é obrigatório em cada item (informe produto.id).");
+                throw new RuntimeException("Produto é obrigatório em cada item.");
             }
 
             Long produtoId = item.getProduto().getId();
@@ -80,18 +80,28 @@ public class NotaFiscalService {
             }
 
             BigDecimal totalItem = preco.multiply(BigDecimal.valueOf(item.getQuantidade()));
-            item.setValorTotal(totalItem.doubleValue()); // gambiarra compatível com Double
+            item.setValorTotal(totalItem.doubleValue());
         }
+
+        notaFiscal.calcularValorTotal();
 
         return notaFiscalRepository.save(notaFiscal);
     }
 
     public List<NotaFiscal> listar() {
-        return notaFiscalRepository.findAll();
+        List<NotaFiscal> notas = notaFiscalRepository.findAll();
+
+        notas.forEach(NotaFiscal::calcularValorTotal);
+
+        return notas;
     }
 
     public NotaFiscal buscarPorId(Long id) {
-        return notaFiscalRepository.findById(id)
+        NotaFiscal nota = notaFiscalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Nota fiscal não encontrada: " + id));
+
+        nota.calcularValorTotal();
+
+        return nota;
     }
 }

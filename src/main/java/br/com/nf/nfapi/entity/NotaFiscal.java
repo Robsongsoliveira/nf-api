@@ -34,6 +34,12 @@ public class NotaFiscal {
     @OneToMany(mappedBy = "notaFiscal", cascade = CascadeType.ALL)
     private List<ItemNotaFiscal> itens = new ArrayList<>();
 
+    public void calcularValorTotal() {
+        this.valorTotal = itens.stream()
+                .mapToDouble(item -> item.getValorTotal() != null ? item.getValorTotal() : 0.0)
+                .sum();
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
