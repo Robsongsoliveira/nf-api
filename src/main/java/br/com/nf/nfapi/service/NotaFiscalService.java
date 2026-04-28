@@ -104,4 +104,64 @@ public class NotaFiscalService {
 
         return nota;
     }
+
+    public NotaFiscal atualizar(Long id, NotaFiscal novaNota) {
+
+        NotaFiscal notaExistente = notaFiscalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nota fiscal não encontrada: " + id));
+
+        if (novaNota.getNumero() == null || novaNota.getNumero().isBlank()) {
+            throw new RuntimeException("Número da nota é obrigatório.");
+        }
+
+        notaExistente.setNumero(novaNota.getNumero());
+        notaExistente.setFornecedor(novaNota.getFornecedor());
+        notaExistente.setDataNota(novaNota.getDataNota());
+
+        if (novaNota.getCliente() == null || novaNota.getCliente().getId() == null) {
+            throw new RuntimeException("Cliente é obrigatório.");
+        }
+
+        Cliente cliente = clienteRepository.findById(novaNota.getCliente().getId())
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        notaExistente.setCliente(cliente);
+        notaExistente.getItens().clear();
+
+        for (ItemNotaFiscal item : novaNota.getItens()) {
+
+            if (item.getQuantidade() == null || item.getQuantidade() <= 0) {
+                throw new RuntimeException("Quantidade inválida.");
+            }
+
+            if (item.getProduto() == null || item.getProduto().getId() == null) {
+                throw new RuntimeException("Produto é obrigatório.");
+            }
+
+            Produto produto = produtoRepository.findById(item.getProduto().getId())
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+            item.setProduto(produto);
+            item.setNotaFiscal(notaExistente);
+
+            BigDecimal preco = produto.getValorUnitario();
+            BigDecimal total = preco.multiply(BigDecimal.valueOf(item.getQuantidade()));
+
+            item.setValorTotal(total.doubleValue());
+
+            notaExistente.getItens().add(item);
+        }
+
+        notaExistente.calcularValorTotal();
+
+        return notaFiscalRepository.save(notaExistente);
+    }
+
+    public void deletar(Long id) {
+
+        NotaFiscal nota = notaFiscalRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Nota fiscal não encontrada: " + id));
+
+        notaFiscalRepository.delete(nota);
+    }
 }

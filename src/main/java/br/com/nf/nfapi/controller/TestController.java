@@ -8,6 +8,6 @@ public class TestController {
 
     @GetMapping("/test")
     public String test() {
-        return "API NF rodando 🚀";
+        return "API NF rodando";
     }
 }
