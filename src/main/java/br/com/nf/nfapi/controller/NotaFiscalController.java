@@ -32,4 +32,15 @@ public class NotaFiscalController {
     public NotaFiscal buscarPorId(@PathVariable Long id) {
         return notaFiscalService.buscarPorId(id);
     }
+
+    @PutMapping("/{id}")
+    public NotaFiscal atualizar(@PathVariable Long id, @RequestBody NotaFiscal notaFiscal) {
+        return notaFiscalService.atualizar(id, notaFiscal);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletar(@PathVariable Long id) {
+        notaFiscalService.deletar(id);
+    }
 }
